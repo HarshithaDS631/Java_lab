@@ -1,0 +1,127 @@
+package prac3a;
+
+import java.sql.*;
+import java.util.Scanner;
+public class prac3 {
+    Connection con = null;
+    Scanner sc = new Scanner(System.in);
+    public Connection getConnect(){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/student","root","root");
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+        return con;
+    }
+    public void insert(String usn,String name,String address){
+        
+        try{
+        	Scanner s = new Scanner(System.in);
+            con = getConnect();
+            Statement st = con.createStatement();
+            
+            String query = "insert into student values('"+usn+"','"+name+"','"+address+"')";
+            st.executeUpdate(query);
+            con.close();
+
+
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+       
+    }
+    public void display(){
+        try {
+            con = getConnect();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("select * from student");
+            while(rs.next()){
+                System.out.println(" "+rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3));
+            }
+            con.close();
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+    }
+    public void delete(String usn){
+       
+        try{
+            con = getConnect();
+            Statement st = con.createStatement();
+            
+            String query = "delete from student where usn = '"+usn+"'";
+            st.executeUpdate(query);
+            con.close();
+
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+
+    }
+    public void update(String usn,String name){
+        
+        try{
+            con = getConnect();
+            Statement st = con.createStatement();   
+                String query = "update student set name = '"+name+"'where usn = '"+usn+"'";
+                st.executeUpdate(query);
+            con.close();
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+        
+
+    }
+    public static void main(String[] args){
+    	String usn, name, address;
+    	prac3 obj = new prac3();
+        while(true){
+            
+            Scanner s= new Scanner(System.in);
+            System.out.println("1:insert 2:update 3:delete 4:display");
+            int n = sc.nextInt();
+            if(n == 1) {
+            	
+                System.out.println("enter usn:");
+                usn = s.next();
+                System.out.println("enter name:");
+                name = s.next();
+                System.out.println("enter address");
+                address= s.next();
+                obj.insert(usn, name, address);;
+            }
+                
+            else if(n == 2) {
+            	
+                 System.out.println("enter usn:");
+                 usn = sc.next();
+                 System.out.println("enter name:");
+                 name = sc.next();
+                obj.update(usn, name);;
+            }
+            else if(n == 3) {
+            	System.out.println("enter usn:");
+                usn = sc.next();
+                obj.delete(usn);
+            }
+            else if(n == 4)
+                obj.display();
+          
+            else
+                System.out.println("failed");
+            System.out.println("do you want to continue? 1 for yes");
+            n = sc.nextInt();
+            if(n==1)
+                continue;
+            else
+                break;
+        }
+    }
+
+}
